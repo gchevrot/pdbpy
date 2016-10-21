@@ -6,8 +6,7 @@ Available data and properties
 Number of residues, coordinates of the atoms, center of gravity, radius of
 gyration.
 
-See the notebooks in this
-[directory](https://github.com/gchevrot/pdbpy/examples) 
+For an example, see this [notebook](https://github.com/gchevrot/pdbpy/blob/master/examples/example.ipyn://github.com/gchevrot/pdbpy/blob/master/examples/example.ipynb) 
 
 
 Requirements
