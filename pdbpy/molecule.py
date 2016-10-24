@@ -1,8 +1,8 @@
 import sys
 import numpy as np
-from coordinates import extract_coordinates
-from residues import extract_residues
-from data import aa_sidechain_chemical_properties as aa_hydrophobicity
+from pdbpy.coordinates import extract_coordinates
+from pdbpy.residues import extract_residues
+from pdbpy.data import aa_sidechain_chemical_properties as aa_hydrophobicity
 
 class Molecule:
     def __init__(self, pdb_name, download_from_pdb=True):
@@ -25,7 +25,7 @@ class Molecule:
         self.download_from_pdb = download_from_pdb
         extract_coordinates(pdb_name, download_from_pdb=download_from_pdb)
         if pdb_name[-4:] == '.pdb':
-            pdb_file = pdb_name[-4:] + '_coordinates.pdb'
+            pdb_file = pdb_name[:-4] + '_coordinates.pdb'
         else:
             pdb_file = pdb_name + '_coordinates.pdb'
         # Number of columns

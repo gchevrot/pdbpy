@@ -1,4 +1,4 @@
-from download import download_pdb
+from pdbpy.download import download_pdb
 
 
 def extract_coordinates(pdb_name, download_from_pdb=True):
@@ -22,10 +22,12 @@ def extract_coordinates(pdb_name, download_from_pdb=True):
         download_pdb(pdb_name)
     if pdb_name[-4:] == '.pdb':
         pdb_file = pdb_name
+        output_name = pdb_name[:-4]
     else:
         pdb_file = pdb_name + '.pdb'
+        output_name = pdb_name
 
-    with open(pdb_file, 'r') as input, open (pdb_name+'_coordinates.pdb', 'w') as output:
+    with open(pdb_file, 'r') as input, open (output_name+'_coordinates.pdb', 'w') as output:
         for line in input:
             # Save only the 1st chain
             if line[:3] == 'TER':

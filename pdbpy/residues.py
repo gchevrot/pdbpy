@@ -1,4 +1,4 @@
-from download import download_pdb
+from pdbpy.download import download_pdb
 
 
 def extract_residues(pdb_name, download_from_pdb=True):
