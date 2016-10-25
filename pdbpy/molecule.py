@@ -19,6 +19,10 @@ class Molecule:
         """
         self.pdb_name = pdb_name
         self.download_from_pdb = download_from_pdb
+        # Extracting coordinates from a pdb file - result is a file (pdb_name_coordinates.pdb)
+        extract_coordinates(pdb_name, download_from_pdb=download_from_pdb)
+        # Extracting coordinates from a pdb file - result is a file (pdb_name_calpha.pdb)
+        extract_calpha_coordinates(self.pdb_name, download_from_pdb=self.download_from_pdb)
 
     def coordinates(self):
         """
@@ -26,8 +30,6 @@ class Molecule:
         ------
         The coordinates in nanometer
         """
-        # Extracting coordinates from a pdb file - result is a file (pdb_name_coordinates.pdb)
-        extract_coordinates(pdb_name, download_from_pdb=download_from_pdb)
         if self.pdb_name[-4:] == '.pdb':
             pdb_file = self.pdb_name[:-4] + '_coordinates.pdb'
         else:
@@ -53,8 +55,6 @@ class Molecule:
         ------
         The coordinates in nanometer of the carbon alpha
         """
-        # Extracting coordinates from a pdb file - result is a file (pdb_name_calpha.pdb)
-        extract_calpha_coordinates(self.pdb_name, download_from_pdb=self.download_from_pdb)
         if self.pdb_name[-4:] == '.pdb':
             pdb_file = self.pdb_name[:-4] + '_calpha.pdb'
         else:
