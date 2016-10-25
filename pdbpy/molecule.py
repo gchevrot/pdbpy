@@ -1,6 +1,6 @@
 import sys
 import numpy as np
-from pdbpy.extract import extract_coordinates, extract_calpha
+from pdbpy.extract import extract_coordinates, extract_calpha_coordinates
 from pdbpy.residues import extract_residues
 from pdbpy.data import aa_sidechain_chemical_properties as aa_hydrophobicity
 
