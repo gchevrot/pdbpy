@@ -15,46 +15,74 @@ class Molecule:
         download_from_pdb:
             default is True. Use the download_pdb function (need an internet connection)
             If False, use a local pdb file.
-
-        Return
-        ------
-        A Molecule object containing the coordinates in nanometer
         """
-        # Extracting coordinates from a pdb file - result is a file (pdb_name_coordinates.pdb)
         self.pdb_name = pdb_name
         self.download_from_pdb = download_from_pdb
         extract_coordinates(pdb_name, download_from_pdb=download_from_pdb)
-        if pdb_name[-4:] == '.pdb':
-            pdb_file = pdb_name[:-4] + '_coordinates.pdb'
+
+    def coordinates(self):
+        """
+        Return
+        ------
+        The coordinates in nanometer
+        """
+        # Extracting coordinates from a pdb file - result is a file (pdb_name_coordinates.pdb)
+        if self.pdb_name[-4:] == '.pdb':
+            pdb_file = self.pdb_name[:-4] + '_coordinates.pdb'
         else:
-            pdb_file = pdb_name + '_coordinates.pdb'
+            pdb_file = self.pdb_name + '_coordinates.pdb'
         # Number of columns
         with open(pdb_file, 'r') as f:
             line = f.readline()
             n_columns = len(line.split())
         # coordinates - divide by 10 for the conversion angstrom ==> nanometer
         if n_columns == 12:
-            self.xyz = np.loadtxt(pdb_file, usecols=(-6,-5,-4)) / 10
-            self.n_res = len(set(np.loadtxt(pdb_file, usecols=(-7,))))
+            coordinates = np.loadtxt(pdb_file, usecols=(-6,-5,-4)) / 10
         elif n_columns == 11: # case whne the before last column is missing
-            self.xyz = np.loadtxt(pdb_file, usecols=(-5,-4,-3)) / 10
-            self.n_res = len(set(np.loadtxt(pdb_file, usecols=(-6,))))
+            coordinates = np.loadtxt(pdb_file, usecols=(-5,-4,-3)) / 10
         else:
-            print('''Number of columns in the PDB file is "anormal" and cannot 
-                  be treated with the current code.''')
+            print('''{}: Number of columns in the PDB file is "anormal" and cannot 
+                  be treated with the current code.'''.format(self.pdb_name))
             sys.exit()
+        return coordinates
+
+    def number_of_residues(self):
+        """
+        Return
+        ------
+        The number of residues
+        """
+        # Extracting coordinates from a pdb file - result is a file (pdb_name_coordinates.pdb)
+        if self.pdb_name[-4:] == '.pdb':
+            pdb_file = self.pdb_name[:-4] + '_coordinates.pdb'
+        else:
+            pdb_file = self.pdb_name + '_coordinates.pdb'
+        # Number of columns
+        with open(pdb_file, 'r') as f:
+            line = f.readline()
+            n_columns = len(line.split())
+        # coordinates - divide by 10 for the conversion angstrom ==> nanometer
+        if n_columns == 12:
+            n_res = len(set(np.loadtxt(pdb_file, usecols=(-7,))))
+        elif n_columns == 11: # case whne the before last column is missing
+            n_res = len(set(np.loadtxt(pdb_file, usecols=(-6,))))
+        else:
+            print('''{}: Number of columns in the PDB file is "anormal" and cannot 
+                  be treated with the current code.'''.format(self.pdb_name))
+            sys.exit()
+        return n_res 
 
     def center_of_gravity(self):
         """
         Return the center of gravity from atomic coordinates
         """
-        return self.xyz.mean(axis=0)
+        return self.coordinates().mean(axis=0)
 
     def radius_of_gyration(self):
         """ 
         Return the radius of gyration (in nm)
         """
-        dist = (self.xyz - self.center_of_gravity())**2
+        dist = (self.coordinates() - self.center_of_gravity())**2
         # My old wrong definition:
         #dist = (dist.sum(axis=1))**0.5
         #return dist.mean()
@@ -65,7 +93,7 @@ class Molecule:
         """
         Return the radius of gyration (in nm) normalized with the number of residues
         """
-        return self.radius_of_gyration() / self.n_res
+        return self.radius_of_gyration() / self.number_of_residues()
 
     def hydrophobicity(self):
         """

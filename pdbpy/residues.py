@@ -36,10 +36,7 @@ def extract_residues(pdb_name, download_from_pdb=True):
                 break
             if line[:4] == 'ATOM':
                 res.append(line[17:20])     # columns 17 to 19 correspond to the residue name
-                if len(line.split()) == 11:
-                    res_number.append(int(line.split()[4]))
-                if len(line.split()) == 12:
-                    res_number.append(int(line.split()[5]))
+                res_number.append(int(line[23:26]))   # number of residues cannot exceed 999
 
     # extract the residue sequence
     res_seq = []
