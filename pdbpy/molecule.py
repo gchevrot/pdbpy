@@ -142,12 +142,14 @@ class Molecule:
         Return the mean square length of the protein calculted with the C-alpha atoms. 
         It is calculated like a MSD.
         """
-        return msd(self.coordinates())
+        #return msd(self.coordinates())
+        return msd(self.calpha_coordinates())
 
     def msl_fft(self):
         """
         Return the mean square length of the protein calculted with the C-alpha atoms. 
         It is calculated like a MSD (using FFT in this case to calculate the MSD).
         """
-        return msd_fft(self.coordinates())
+        #return msd_fft(self.coordinates())
+        return msd_fft(self.calpha_coordinates())
 
