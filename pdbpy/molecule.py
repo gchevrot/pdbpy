@@ -3,6 +3,7 @@ import numpy as np
 from pdbpy.extract import extract_coordinates, extract_calpha_coordinates
 from pdbpy.residues import extract_residues
 from pdbpy.data import aa_sidechain_chemical_properties as aa_hydrophobicity
+from pdbpy.msd import msd, msd_fft
 
 class Molecule:
     def __init__(self, pdb_name, download_from_pdb=True):
@@ -109,5 +110,17 @@ class Molecule:
                 hydrophobic += 1
         return hydrophobic/(hydrophilic+hydrophobic)*100
 
+    def msl(self):
+        """
+        Return the mean square length of the protein. 
+        It is calculated like a MSD.
+        """
+        return msd(self.coordinates())
 
+    def msl_fft(self):
+        """
+        Return the mean square length of the protein. 
+        It is calculated like a MSD (using FFT in this case to calculate the MSD).
+        """
+        return msd_fft(self.coordinates())
 
