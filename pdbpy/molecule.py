@@ -81,7 +81,5 @@ class Molecule:
                 hydrophobic += 1
         return hydrophobic/(hydrophilic+hydrophobic)*100
 
-    def msd(self):
-
 
 
