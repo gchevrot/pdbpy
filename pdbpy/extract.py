@@ -33,7 +33,13 @@ def extract_coordinates(pdb_name, download_from_pdb=True):
             if line[:3] == 'TER':
                 break
             if line[:4] == 'ATOM':
-                output.write(line)
+                # Sometimes in X-ray cristallography, one sees superposition of 
+                # differents positions for each atom. We will extract only the first position
+                # The different positions are denoted with a letter preceding the residue name 
+                # in column 17. Note the column 55-60 (field "occupancy") correspond to a reduced 
+                # electronic density for each atom
+                if line[16] == ' ' or line[16] == 'A': 
+                    output.write(line)
 
 def extract_calpha_coordinates(pdb_name, download_from_pdb=True):
     """
@@ -68,5 +74,11 @@ def extract_calpha_coordinates(pdb_name, download_from_pdb=True):
                 break
             if line[:4] == 'ATOM':
                 if line[13:15] == 'CA':
-                    output.write(line)
+                    # Sometimes in X-ray cristallography, one sees superposition of 
+                    # differents positions for each atom. We will extract only the first position
+                    # The different positions are denoted with a letter preceding the residue name 
+                    # in column 17. Note the column 55-60 (field "occupancy") correspond to a reduced 
+                    # electronic density for each atom
+                    if line[16] == ' ' or line[16] == 'A': 
+                        output.write(line)
 
