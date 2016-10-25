@@ -19,7 +19,6 @@ class Molecule:
         """
         self.pdb_name = pdb_name
         self.download_from_pdb = download_from_pdb
-        extract_coordinates(pdb_name, download_from_pdb=download_from_pdb)
 
     def coordinates(self):
         """
@@ -28,10 +27,38 @@ class Molecule:
         The coordinates in nanometer
         """
         # Extracting coordinates from a pdb file - result is a file (pdb_name_coordinates.pdb)
+        extract_coordinates(pdb_name, download_from_pdb=download_from_pdb)
         if self.pdb_name[-4:] == '.pdb':
             pdb_file = self.pdb_name[:-4] + '_coordinates.pdb'
         else:
             pdb_file = self.pdb_name + '_coordinates.pdb'
+        # Number of columns
+        with open(pdb_file, 'r') as f:
+            line = f.readline()
+            n_columns = len(line.split())
+        # coordinates - divide by 10 for the conversion angstrom ==> nanometer
+        if n_columns == 12:
+            coordinates = np.loadtxt(pdb_file, usecols=(-6,-5,-4)) / 10
+        elif n_columns == 11: # case whne the before last column is missing
+            coordinates = np.loadtxt(pdb_file, usecols=(-5,-4,-3)) / 10
+        else:
+            print('''{}: Number of columns in the PDB file is "anormal" and cannot 
+                  be treated with the current code.'''.format(self.pdb_name))
+            sys.exit()
+        return coordinates
+
+    def calpha_coordinates(self):
+        """
+        Return
+        ------
+        The coordinates in nanometer of the carbon alpha
+        """
+        # Extracting coordinates from a pdb file - result is a file (pdb_name_calpha.pdb)
+        extract_calpha_coordinates(self.pdb_name, download_from_pdb=self.download_from_pdb)
+        if self.pdb_name[-4:] == '.pdb':
+            pdb_file = self.pdb_name[:-4] + '_calpha.pdb'
+        else:
+            pdb_file = self.pdb_name + '_calpha.pdb'
         # Number of columns
         with open(pdb_file, 'r') as f:
             line = f.readline()
@@ -112,14 +139,14 @@ class Molecule:
 
     def msl(self):
         """
-        Return the mean square length of the protein. 
+        Return the mean square length of the protein calculted with the C-alpha atoms. 
         It is calculated like a MSD.
         """
         return msd(self.coordinates())
 
     def msl_fft(self):
         """
-        Return the mean square length of the protein. 
+        Return the mean square length of the protein calculted with the C-alpha atoms. 
         It is calculated like a MSD (using FFT in this case to calculate the MSD).
         """
         return msd_fft(self.coordinates())
