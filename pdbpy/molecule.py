@@ -4,6 +4,8 @@ from pdbpy.extract import extract_coordinates, extract_calpha_coordinates
 from pdbpy.residues import extract_residues
 from pdbpy.data import aa_sidechain_chemical_properties as aa_hydrophobicity
 from pdbpy.msd import msd, msd_fft
+from pdbpy.download import download_pdb
+
 
 class Molecule:
     def __init__(self, pdb_name, download_from_pdb=True):
@@ -19,60 +21,28 @@ class Molecule:
         """
         self.pdb_name = pdb_name
         self.download_from_pdb = download_from_pdb
-        # Extracting coordinates from a pdb file - result is a file (pdb_name_coordinates.pdb)
-        extract_coordinates(pdb_name, download_from_pdb=download_from_pdb)
-        # Extracting coordinates from a pdb file - result is a file (pdb_name_calpha.pdb)
-        extract_calpha_coordinates(self.pdb_name, download_from_pdb=self.download_from_pdb)
+        if self.download_from_pdb:
+            download_pdb(self.pdb_name)
 
     def coordinates(self):
         """
         Return
         ------
-        The coordinates in nanometer
+        coordinates: numpy array, dimension: (3, n)
+            The coordinates in nanometer
         """
-        if self.pdb_name[-4:] == '.pdb':
-            pdb_file = self.pdb_name[:-4] + '_coordinates.pdb'
-        else:
-            pdb_file = self.pdb_name + '_coordinates.pdb'
-        # Number of columns
-        with open(pdb_file, 'r') as f:
-            line = f.readline()
-            n_columns = len(line.split())
-        # coordinates - divide by 10 for the conversion angstrom ==> nanometer
-        if n_columns == 12:
-            coordinates = np.loadtxt(pdb_file, usecols=(-6,-5,-4)) / 10
-        elif n_columns == 11: # case whne the before last column is missing
-            coordinates = np.loadtxt(pdb_file, usecols=(-5,-4,-3)) / 10
-        else:
-            print('''{}: Number of columns in the PDB file is "anormal" and cannot 
-                  be treated with the current code.'''.format(self.pdb_name))
-            sys.exit()
+        coordinates = extract_coordinates(self.pdb_name, download_from_pdb=self.download_from_pdb) 
         return coordinates
 
     def calpha_coordinates(self):
         """
         Return
         ------
-        The coordinates in nanometer of the carbon alpha
+        coordinates: numpy array, dimension: (3, n)
+            The coordinates in nanometer of the carbon alpha
         """
-        if self.pdb_name[-4:] == '.pdb':
-            pdb_file = self.pdb_name[:-4] + '_calpha.pdb'
-        else:
-            pdb_file = self.pdb_name + '_calpha.pdb'
-        # Number of columns
-        with open(pdb_file, 'r') as f:
-            line = f.readline()
-            n_columns = len(line.split())
-        # coordinates - divide by 10 for the conversion angstrom ==> nanometer
-        if n_columns == 12:
-            coordinates = np.loadtxt(pdb_file, usecols=(-6,-5,-4)) / 10
-        elif n_columns == 11: # case whne the before last column is missing
-            coordinates = np.loadtxt(pdb_file, usecols=(-5,-4,-3)) / 10
-        else:
-            print('''{}: Number of columns in the PDB file is "anormal" and cannot 
-                  be treated with the current code.'''.format(self.pdb_name))
-            sys.exit()
-        return coordinates
+        calpha_coordinates = extract_calpha_coordinates(self.pdb_name, download_from_pdb=self.download_from_pdb) 
+        return calpha_coordinates
 
     def number_of_residues(self):
         """
@@ -82,23 +52,19 @@ class Molecule:
         """
         # Extracting coordinates from a pdb file - result is a file (pdb_name_coordinates.pdb)
         if self.pdb_name[-4:] == '.pdb':
-            pdb_file = self.pdb_name[:-4] + '_coordinates.pdb'
+            pdb_file = self.pdb_name
         else:
-            pdb_file = self.pdb_name + '_coordinates.pdb'
-        # Number of columns
+            pdb_file = self.pdb_name + '.pdb'
+        
+        res_number = []
         with open(pdb_file, 'r') as f:
-            line = f.readline()
-            n_columns = len(line.split())
-        # coordinates - divide by 10 for the conversion angstrom ==> nanometer
-        if n_columns == 12:
-            n_res = len(set(np.loadtxt(pdb_file, usecols=(-7,))))
-        elif n_columns == 11: # case whne the before last column is missing
-            n_res = len(set(np.loadtxt(pdb_file, usecols=(-6,))))
-        else:
-            print('''{}: Number of columns in the PDB file is "anormal" and cannot 
-                  be treated with the current code.'''.format(self.pdb_name))
-            sys.exit()
-        return n_res 
+            for line in f:
+                if line[:3] == 'TER':
+                    break
+                if line[:4] == 'ATOM':
+                    res_number.append(int(line[22:26]))
+                n_res = len(set(res_number))
+        return n_res
 
     def center_of_gravity(self):
         """
