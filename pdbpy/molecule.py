@@ -21,28 +21,31 @@ class Molecule:
         """
         self.pdb_name = pdb_name
         self.download_from_pdb = download_from_pdb
-        if self.download_from_pdb:
-            download_pdb(self.pdb_name)
-
-    def coordinates(self):
-        """
-        Return
-        ------
-        coordinates: numpy array, dimension: (3, n)
-            The coordinates in nanometer
-        """
-        coordinates = extract_coordinates(self.pdb_name, download_from_pdb=self.download_from_pdb) 
-        return coordinates
-
-    def calpha_coordinates(self):
-        """
-        Return
-        ------
-        coordinates: numpy array, dimension: (3, n)
-            The coordinates in nanometer of the carbon alpha
-        """
-        calpha_coordinates = extract_calpha_coordinates(self.pdb_name, download_from_pdb=self.download_from_pdb) 
-        return calpha_coordinates
+        #if self.download_from_pdb:
+        #    download_pdb(self.pdb_name)
+        # Extract coordinates within __init__ rather than with dedicated function for performance reasons
+        self.coordinates = extract_coordinates(self.pdb_name, download_from_pdb=self.download_from_pdb) 
+        self.calpha_coordinates = extract_calpha_coordinates(self.pdb_name, download_from_pdb=self.download_from_pdb) 
+    
+#    def coordinates(self):
+#        """
+#        Return
+#        ------
+#        coordinates: numpy array, dimension: (3, n)
+#            The coordinates in nanometer
+#        """
+#        coordinates = extract_coordinates(self.pdb_name, download_from_pdb=self.download_from_pdb) 
+#        return coordinates
+#
+#    def calpha_coordinates(self):
+#        """
+#        Return
+#        ------
+#        coordinates: numpy array, dimension: (3, n)
+#            The coordinates in nanometer of the carbon alpha
+#        """
+#        calpha_coordinates = extract_calpha_coordinates(self.pdb_name, download_from_pdb=self.download_from_pdb) 
+#        return calpha_coordinates
 
     def number_of_residues(self):
         """
@@ -70,13 +73,13 @@ class Molecule:
         """
         Return the center of gravity from atomic coordinates
         """
-        return self.coordinates().mean(axis=0)
+        return self.coordinates.mean(axis=0)
 
     def radius_of_gyration(self):
         """ 
         Return the radius of gyration (in nm)
         """
-        dist = (self.coordinates() - self.center_of_gravity())**2
+        dist = (self.coordinates - self.center_of_gravity())**2
         # My old wrong definition:
         #dist = (dist.sum(axis=1))**0.5
         #return dist.mean()
@@ -108,14 +111,14 @@ class Molecule:
         Return the mean square length of the protein calculted with the C-alpha atoms. 
         It is calculated like a MSD.
         """
-        #return msd(self.coordinates())
-        return msd(self.calpha_coordinates())
+        #return msd(self.coordinates)
+        return msd(self.calpha_coordinates)
 
     def msl_fft(self):
         """
         Return the mean square length of the protein calculted with the C-alpha atoms. 
         It is calculated like a MSD (using FFT in this case to calculate the MSD).
         """
-        #return msd_fft(self.coordinates())
-        return msd_fft(self.calpha_coordinates())
+        #return msd_fft(self.coordinates)
+        return msd_fft(self.calpha_coordinates)
 
