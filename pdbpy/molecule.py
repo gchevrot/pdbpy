@@ -106,19 +106,31 @@ class Molecule:
                 hydrophobic += 1
         return hydrophobic/(hydrophilic+hydrophobic)*100
 
-    def msl(self):
+    def msl(self, calpha=True, all_atoms=False):
         """
-        Return the mean square length of the protein calculted with the C-alpha atoms. 
+        Return the mean square length of the protein calculted with the C-alpha 
+        atoms if calpha is True or for all atoms if all_atoms is True
         It is calculated like a MSD.
         """
-        #return msd(self.coordinates)
-        return msd(self.calpha_coordinates)
+        # if both are True, there is a problem, you should choose only one 
+        if calpha and all_atoms:
+            print("Choose calpha or all_atoms! You cannot choose both!")
+        if calpha:
+            return msd(self.calpha_coordinates)
+        if all_atoms:
+            return msd(self.coordinates)
 
-    def msl_fft(self):
+    def msl_fft(self, calpha=True, all_atoms=False):
         """
-        Return the mean square length of the protein calculted with the C-alpha atoms. 
+        Return the mean square length of the protein calculted with the C-alpha 
+        atoms if calpha is True or for all atoms if all_atoms is True
         It is calculated like a MSD (using FFT in this case to calculate the MSD).
         """
-        #return msd_fft(self.coordinates)
-        return msd_fft(self.calpha_coordinates)
+        # if both are True, there is a problem, you should choose only one 
+        if calpha and all_atoms:
+            print("Choose calpha or all_atoms! You cannot choose both!")
+        if calpha:
+            return msd_fft(self.calpha_coordinates)
+        if all_atoms:
+            return msd_fft(self.coordinates)
 
