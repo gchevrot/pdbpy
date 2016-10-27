@@ -5,6 +5,7 @@ from pdbpy.residues import extract_residues
 from pdbpy.data import aa_sidechain_chemical_properties as aa_hydrophobicity
 from pdbpy.msd import msd, msd_fft
 from pdbpy.download import download_pdb
+from pdbpy.inspection import is_dna_or_rna
 
 
 class Molecule:
@@ -21,6 +22,10 @@ class Molecule:
         """
         self.pdb_name = pdb_name
         self.download_from_pdb = download_from_pdb
+        # Verifying that it is not a RNA or DNA molecule
+        if is_dna_or_rna(self.pdb_name, self.download_from_pdb):
+            #print("{} corresponds to a DNA or RNA molecule. This code cannot analyze DNA or RNA.".format(self.pdb_name))
+            sys.exit()
         #if self.download_from_pdb:
         #    download_pdb(self.pdb_name)
         # Extract coordinates within __init__ rather than with dedicated function for performance reasons
