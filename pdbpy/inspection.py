@@ -34,6 +34,10 @@ def is_dna_or_rna(pdb_name, download_from_pdb=True):
             if line[:10] == 'COMPND   2':
                 if re.search(r'DNA', line) or re.search(r'RNA', line):
                     result = True
-
+                    break
+            if line[:6] == 'KEYWDS':
+                if re.search(r'DNA', line) or re.search(r'RNA', line):
+                    result = True
+                    break
     return result
 
