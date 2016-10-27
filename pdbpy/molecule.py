@@ -30,6 +30,9 @@ class Molecule:
         #    download_pdb(self.pdb_name)
         # Extract coordinates within __init__ rather than with dedicated function for performance reasons
         self.coordinates = extract_coordinates(self.pdb_name, download_from_pdb=self.download_from_pdb) 
+        if len(self.coordinates) == 0:
+            #print('There is probably no "ATOM" in {}'.format(self.pdb_name))
+            sys.exit()
         self.calpha_coordinates = extract_calpha_coordinates(self.pdb_name, download_from_pdb=self.download_from_pdb) 
     
 #    def coordinates(self):
