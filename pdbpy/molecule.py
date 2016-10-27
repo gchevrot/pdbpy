@@ -105,6 +105,9 @@ class Molecule:
         hydrophilic = 0
         hydrophobic = 0
         for res in res_sequence:
+            # sometimes residue name is not known - so hydrophobicity cannot be calculated
+            if res == 'UNK':
+                return 'NaN'
             if aa_hydrophobicity[res] == 'hydrophilic':
                 hydrophilic += 1
             else:
