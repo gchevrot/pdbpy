@@ -8,6 +8,7 @@ aa_sidechain_chemical_properties = {
 	'ASP': 'hydrophilic',
 	'ASX': 'hydrophilic',
 	'CYS': 'hydrophilic',
+	'SEC': 'hydrophilic',  # Selenocysteine
 	'GLU': 'hydrophilic',
 	'GLN': 'hydrophilic',
 	'GLX': 'hydrophilic',
