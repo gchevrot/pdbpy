@@ -17,7 +17,7 @@ def extract_coordinates(pdb_name, download_from_pdb=True):
 
     Return
     ------
-    coordinates: numpy array, dimension: (3, n)
+    coordinates: numpy array, dimension: (n, 3)
                 coordinates in nanometers 
     """
     if download_from_pdb:
@@ -60,7 +60,7 @@ def extract_calpha_coordinates(pdb_name, download_from_pdb=True):
 
     Return
     ------
-    coordinates: numpy array, dimension: (3, n)
+    coordinates: numpy array, dimension: (n, 3)
                 coordinates in nanometers 
     """
     if download_from_pdb:
