@@ -2,6 +2,14 @@ import numpy as np
 
 # MSD straightforward implementation
 def msd(r):
+    """
+    Mean square displacement
+
+    Parameters
+    ----------
+    r: numpy array. dimensions: (t, 3)
+       Array containing the coordinates along t
+    """
     shifts = np.arange(len(r))
     msds = np.zeros(shifts.size)    
     for i, shift in enumerate(shifts):
@@ -26,6 +34,14 @@ def autocorrfft(x):
     return res/n
 
 def msd_fft(r):
+    """
+    Mean square displacement (using FFT)
+
+    Parameters
+    ----------
+    r: numpy array. dimensions: (t, 3)
+       Array containing the coordinates along t
+    """
     N = len(r)
     D = np.square(r).sum(axis=1)
     D = np.append(D,0)
