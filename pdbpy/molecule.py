@@ -107,11 +107,21 @@ class Molecule:
         dist = (dist.sum(axis=1)).mean()
         return dist**0.5
 
-    def radius_of_gyration_normalized(self):
+    def radius_of_gyration_normalized(self, residue = True):
         """
-        Return the radius of gyration (in nm) normalized with the number of residues
+        Return the radius of gyration (in nm) normalized with the number of residues or atoms
+
+        Parameters
+        ----------
+        residue: boolean, default is True
+            if residue is True, radius of gyration is normalized against the number of residue
+            if residue is False, radius of gyration is normalized against the number of atoms
+            
         """
-        return self.radius_of_gyration() / self.number_of_residues()
+        if residue:
+            return self.radius_of_gyration() / self.number_of_residues()
+        else:
+            return self.radius_of_gyration() / len(self.coordinates)
 
     def hydrophobicity(self):
         """
